@@ -26,7 +26,7 @@ Dự án phân tích cảm xúc (sentiment analysis) cho văn bản tiếng Vi�
 
 ## 📁 Cấu Trúc Dự Án
 
-```
+``` DEMO CẤU TRÚC DỰ ÁN
 Sentiment-Analysis-Vietnamese/
 ├── data/                   # Dữ liệu
 │   ├── raw/               # Dữ liệu thô
@@ -125,13 +125,13 @@ Chúng tôi hoan nghênh mọi đóng góp! Vui lòng:
 
 ## 📄 License
 
-[Thêm license phù hợp - MIT, Apache 2.0, etc.]
+MIT License
 
 ## 👨‍💻 Team
 
 - **Team Lead**: Nguyễn Thế Thiện
-- **Data Scientists**: Hà Đức Mạnh, Nguyễn Thế Thiện
-- **ML Engineers**: Hà Đức Mạnh, Nguyễn Thế Thiện
+- **Data Scientists**: Hà Đức Mạnh, Nguyễn Thế Thiện, Nguyễn Trường Sơn
+- **ML Engineers**: Hà Đức Mạnh, Nguyễn Thế Thiện, Nguyễn Trường Sơn
 
 ## 📧 Liên Hệ
 
