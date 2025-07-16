@@ -22,7 +22,7 @@ git remote add upstream https://github.com/[original-repo]/Sentiment-Analysis-Vi
 
 ### 2. Cập Nhật Code Mới Nhất
 
-**⚠️ LUÔN LÀM ĐIỀU NÀY TRƯỚC KHI BẮT ĐẦU LÀMVIỆC MỚI:**
+**⚠️ LUÔN LÀM ĐIỀU NÀY TRƯỚC KHI BẮT ĐẦU LÀM VIỆC MỚI:**
 
 ```bash
 # Chuyển về branch main
