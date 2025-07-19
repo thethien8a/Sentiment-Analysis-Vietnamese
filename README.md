@@ -17,7 +17,7 @@ Dự án phân tích cảm xúc (sentiment analysis) cho văn bản tiếng Vi�
 
 - **Python 3.8+**
 - **TensorFlow/Keras** - Deep Learning framework
-- **PyTorch** - Alternative deep learning framework  
+- **PyTorch** - Alternative deep learning framework  `
 - **Transformers** - Hugging Face library cho BERT models
 - **Pandas & NumPy** - Data manipulation
 - **Scikit-learn** - Traditional ML algorithms
@@ -26,7 +26,7 @@ Dự án phân tích cảm xúc (sentiment analysis) cho văn bản tiếng Vi�
 
 ## 📁 Cấu Trúc Dự Án
 
-```
+``` DEMO CẤU TRÚC FILE
 Sentiment-Analysis-Vietnamese/
 ├── data/                   # Dữ liệu
 │   ├── raw/               # Dữ liệu thô

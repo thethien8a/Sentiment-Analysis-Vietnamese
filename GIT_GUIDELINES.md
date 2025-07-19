@@ -8,7 +8,7 @@
 
 ```bash
 # Clone repository về máy
-git clone https://github.com/[username]/Sentiment-Analysis-Vietnamese.git
+git clone https://github.com/thethien8a/Sentiment-Analysis-Vietnamese.git
 
 # Di chuyển vào thư mục dự án
 cd Sentiment-Analysis-Vietnamese
@@ -17,12 +17,12 @@ cd Sentiment-Analysis-Vietnamese
 git remote -v
 
 # Thêm upstream (nếu fork từ repo gốc)
-git remote add upstream https://github.com/[original-repo]/Sentiment-Analysis-Vietnamese.git
+git remote add upstream https://github.com/thethien8a/Sentiment-Analysis-Vietnamese.git
 ```
 
 ### 2. Cập Nhật Code Mới Nhất
 
-**⚠️ LUÔN LÀM ĐIỀU NÀY TRƯỚC KHI BẮT ĐẦU LÀMVIỆC MỚI:**
+**⚠️ LUÔN LÀM ĐIỀU NÀY TRƯỚC KHI BẮT ĐẦU LÀM VIỆC MỚI:**
 
 ```bash
 # Chuyển về branch main
@@ -140,12 +140,6 @@ Mô tả ngắn gọn về thay đổi
 <!-- Thêm ảnh minh họa nếu có UI changes -->
 ```
 
-### 2. Code Review
-
-- **Reviewer**: Ít nhất 1-2 người review
-- **Author**: Trả lời comments và fix theo feedback
-- **Merge**: Chỉ merge khi có approval từ reviewers
-
 ## ⚡ Tránh Xung Đột Code
 
 ### 1. Cập Nhật Thường Xuyên
@@ -213,7 +207,7 @@ git push origin your-branch
 
 ### Quy Tắc Tổ Chức
 
-```
+``` DEMO CẤU TRÚC FILE
 Sentiment-Analysis-Vietnamese/
 ├── data/                   # Dữ liệu
 │   ├── raw/               # Dữ liệu thô
