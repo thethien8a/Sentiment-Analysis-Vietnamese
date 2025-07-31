@@ -1,10 +1,10 @@
 import pandas as pd
 import numpy as np
 import re
-from collections import Counter
 import matplotlib.pyplot as plt
 import seaborn as sns
 from wordcloud import WordCloud
+from collections import Counter
 import warnings
 
 TEENCODE_DICT = {
@@ -79,23 +79,6 @@ with open('./vietnamese-stopwords-dash.txt', 'r', encoding='utf-8') as file:
 warnings.filterwarnings('ignore')
 
 
-# Tạo font cho tiếng Việt dành cho matplotlib
-plt.rcParams['font.family'] = ['DejaVu Sans', 'Arial Unicode MS', 'SimHei']
-
-
-# Đọc dữ liệu
-comments_df = pd.read_csv('./comment_data/Tram_dung_chan_Jack.csv', encoding='utf-8')
-
-
-# Lọc seeding (Loại những người comment nhiều lần)
-print("Số lượng comment ban đầu: ", len(comments_df))
-comments_df.drop_duplicates(subset=['authorDisplayName'], inplace=True)
-comments_df.dropna(subset=['textDisplay'], inplace=True)
-print("Số lượng comment sau khi lọc: ", len(comments_df))
-
-# Lấy chỉ comment
-comments_only = comments_df["textDisplay"]
-
 
 # Hàm làm sạch cơ bản:
 def preprocessing_basic(text):
@@ -117,9 +100,6 @@ def replace_teencode(text,teencode_dict):
 
   return ' '.join(words)
 
-# def exception_stop_words(text):
-#   return text.replace("hay","hayy")
-
 
 def replace_emoji(text,emoji_dict):
   for emoji, word in emoji_dict.items():
@@ -128,13 +108,6 @@ def replace_emoji(text,emoji_dict):
   text = re.sub(r'\s+', ' ', text).strip()
   return text
 
-# def remove_stop_words(text):
-#   global STOP_WORDS
-#   words = text.split()
-
-#   filtered_words = [word for word in words if word not in STOP_WORDS]
-
-#   return ' '.join(filtered_words)
 
 def keep_chars(text):
   vietnamese_chars = 'àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ'
@@ -144,21 +117,25 @@ def keep_chars(text):
   # Tạo pattern để tìm các ký tự KHÔNG thuộc whitelist (và cũng không phải khoảng trắng)
   unwanted_chars_pattern = re.compile(rf'[^{allowed_chars}\s]')
   text = unwanted_chars_pattern.sub(' ', text)
+  
   text = re.sub(r'\s+',' ',text)
   text = text.strip()
   return text
 
 def remove_duplicated_emoji(text):
     emoji_pattern = r'bieu_tuong_[a-zA-Z_]+'
-    emojis = re.findall(emoji_pattern, text)
-    unique_emojis = []
-    seen_emojis = set()
-    for emoji in emojis:
-        if emoji not in seen_emojis:
-            unique_emojis.append(emoji)
-            seen_emojis.add(emoji)
+    words = text.split()
+    seen = set()
+    complete_text = []
+    for word in words:
+        if re.fullmatch(emoji_pattern, word):
+            if word not in seen:
+                complete_text.append(word)
+                seen.add(word)
+        else:
+            complete_text.append(word)
+    return ' '.join(complete_text)
                 
-   
 
 def preprocess_comment(text):
     global TEENCODE_DICT
@@ -169,20 +146,148 @@ def preprocess_comment(text):
     text = replace_teencode(text, TEENCODE_DICT)
     text = replace_emoji(text,EMOJI_DICT)
     text = keep_chars(text)
+    text = remove_duplicated_emoji(text)
     
     return text
 
 
+## Do không cài được underthesea để tokenize nên dùng cách này7
+def get_top_bigrams(comments_series, top_n=20, min_length=2):
+    all_bigrams = []
+    
+    for comment in comments_series:
+        words = comment.split()
+        filtered_words = [word for word in words 
+                        if len(word) >= min_length and word not in STOP_WORDS]
+        
+        # Tạo bigrams
+        for i in range(len(filtered_words) - 1):
+            bigram = f"{filtered_words[i]} {filtered_words[i+1]}"
+            all_bigrams.append(bigram)
+    
+    bigram_counts = Counter(all_bigrams)
+    
+    bigram_df = pd.DataFrame(bigram_counts.most_common(top_n), 
+                            columns=['bigram', 'count'])
+    
+    total_bigrams = len(all_bigrams)
+    bigram_df['percentage'] = (bigram_df['count'] / total_bigrams * 100).round(2)
+    
+    return bigram_df
 
-# Làm sạch
-comments_only = comments_only.apply(preprocess_comment)
+def get_top_trigrams(comments_series, top_n=20, min_length=2):
+    all_trigrams = []
+    
+    for comment in comments_series:
+        if pd.notna(comment) and comment.strip():
+            words = comment.split()
+            # Lọc từ
+            filtered_words = [word for word in words 
+                           if len(word) >= min_length and word not in STOP_WORDS]
+            
+            # Tạo trigrams
+            for i in range(len(filtered_words) - 2):
+                trigram = f"{filtered_words[i]} {filtered_words[i+1]} {filtered_words[i+2]}"
+                all_trigrams.append(trigram)
+    
+    trigram_counts = Counter(all_trigrams)
 
-print(comments_only[:20])
-# # Tạo word cloud
-# wordcloud = WordCloud(width=800, height=400, background_color='white').generate(' '.join(comments_only))
+    trigram_df = pd.DataFrame(trigram_counts.most_common(top_n), 
+                             columns=['trigram', 'count'])
+    
+    total_trigrams = len(all_trigrams)
+    trigram_df['percentage'] = (trigram_df['count'] / total_trigrams * 100).round(2)
+    
+    return trigram_df
 
-# # Vẽ word cloud
-# plt.figure(figsize=(10, 5))
-# plt.imshow(wordcloud, interpolation='bilinear')
-# plt.axis('off')
-# plt.show()
+def visualize_top_words(word_df, title="Top 20 Từ Xuất Hiện Nhiều Nhất"):
+    plt.figure(figsize=(12, 8))
+    
+    plt.subplot(2, 1, 1)
+    bars = plt.barh(range(len(word_df)), word_df['count'])
+    plt.yticks(range(len(word_df)), word_df['word'])
+    plt.xlabel('Số lần xuất hiện')
+    plt.title(title)
+
+    for i, bar in enumerate(bars):
+        width = bar.get_width()
+        plt.text(width + 0.1, bar.get_y() + bar.get_height()/2, 
+                f'{word_df.iloc[i]["count"]}', ha='left', va='center')
+    
+    # Vẽ pie chart cho top 10
+    plt.subplot(2, 1, 2)
+    top_10 = word_df.head(10)
+    plt.pie(top_10['percentage'], labels=top_10['word'], autopct='%1.1f%%')
+    plt.title('Phân Bố Top 10 Từ (Theo %)')
+    
+    plt.tight_layout()
+    plt.show()
+
+def create_wordcloud(comments_series, title="Word Cloud - Từ Vựng Comment"):
+    """
+    Tạo word cloud từ comments
+    """
+    # Tách tất cả từ
+    all_words = []
+    for comment in comments_series:
+        if pd.notna(comment) and comment.strip():
+            words = comment.split()
+            filtered_words = [word for word in words 
+                           if len(word) >= 2 and word not in STOP_WORDS]
+            all_words.extend(filtered_words)
+    
+    # Tạo text cho wordcloud
+    text = ' '.join(all_words)
+    
+    # Tạo wordcloud
+    wordcloud = WordCloud(
+        width=800, 
+        height=400, 
+        background_color='white',
+        max_words=100,
+        colormap='viridis',
+        font_path='arial.ttf'  
+    ).generate(text)
+    
+    # Vẽ wordcloud
+    plt.figure(figsize=(12, 6))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.title(title, fontsize=16)
+    plt.show()
+
+if __name__ == "__main__":
+  # Đọc dữ liệu
+  comments_df = pd.read_csv('./comment_data/Tram_dung_chan_Jack.csv', encoding='utf-8')
+
+  # Lọc seeding (Loại những người comment nhiều lần)
+  print("Số lượng comment ban đầu: ", len(comments_df))
+  comments_df.drop_duplicates(subset=['authorDisplayName'], inplace=True)
+  comments_df.dropna(subset=['textDisplay'], inplace=True)
+  print("Số lượng comment sau khi lọc: ", len(comments_df))
+
+  # Lấy chỉ comment
+  comments_only = comments_df["textDisplay"]
+
+  # Làm sạch
+  comments_only = comments_only.apply(preprocess_comment)
+
+  # 2. Top bigrams
+  print("\n2. TOP 15 BIGRAMS (CỤM 2 TỪ) XUẤT HIỆN NHIỀU NHẤT:")
+  top_bigrams = get_top_bigrams(comments_only, top_n=15)
+  print(top_bigrams)
+  
+  # 3. Top trigrams
+  print("\n3. TOP 10 TRIGRAMS (CỤM 3 TỪ) XUẤT HIỆN NHIỀU NHẤT:")
+  top_trigrams = get_top_trigrams(comments_only, top_n=10)
+  print(top_trigrams)
+  
+  # 4. Visualization
+  print("\n4. TẠO BIỂU ĐỒ VÀ WORD CLOUD...")
+  create_wordcloud(comments_only)
+
+
+
+
+
+
