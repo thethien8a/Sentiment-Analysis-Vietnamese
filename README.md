@@ -1,6 +1,6 @@
 # 🎯 Sentiment Analysis Vietnamese
 
-Dự án phân tích cảm xúc (Sentiment Analysis) cho tiếng Việt, tập trung vào việc phân tích comment YouTube và các văn bản tiếng Việt trên mạng xã hội.
+Dự án phân tích cảm xúc (Sentiment Analysis) cho tiếng Việt, tập trung vào việc phân tích comment YouTube của bài hát "Trạm dừng chân - J97"
 
 ## 📋 Mục Tiêu Dự Án
 
