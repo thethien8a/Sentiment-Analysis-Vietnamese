@@ -23,7 +23,7 @@ Sentiment-Analysis-Vietnamese/
 │   ├── Tram_dung_chan_Jack.csv            # Dữ liệu comment gốc
 │   └── Tram_dung_chan_Jack_shuffled.xlsx  # Dữ liệu đã xáo trộn
 ├── 📝 vietnamese-stopwords-dash.txt        # Danh sách stop words tiếng Việt
-├── 📋 GIT_GUIDELINES.md                    # Hướng dẫn làm việc với Git
+├── 📋 GIT_GUIDELINES.md                    # Hướng dẫn làm việc với Git cho các thành viên
 ├── 📄 .gitignore                           # Cấu hình Git ignore
 └── 📖 README.md                            # Tài liệu chính này
 ```
